@@ -1,7 +1,9 @@
 package main
 
 import (
+	"net/http"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	attachmentHandler "study-api/internal/attachment"
 	courseHandler "study-api/internal/course"
 	eventHandler "study-api/internal/event"
@@ -16,6 +18,17 @@ import (
 
 func main() {
 	e := echo.New()
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"*"}, // Replace with your React app's origin
+		AllowMethods:     []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowCredentials: false, // If you need to send cookies/auth headers
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           3600,
+	   }))
+	e.Use(middleware.Logger())
+
 	db, err := database.InitDB()
 	if err != nil {
 		e.Logger.Fatal(err)

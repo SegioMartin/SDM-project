@@ -33,6 +33,14 @@ services:
       DB_PASSWORD: mypassword
       DB_NAME: mydb
       DB_PORT: 5432
+  
+  front:
+    build: front  # Путь к директории с Dockerfile React-приложения
+    container_name: misis-sdm-front
+    ports:
+      - "3000:80"       # Пробрасываем порт 3000 наружу для доступа к React-приложению
+    depends_on:
+      - server
 
 volumes:
   misis_sdm_db_data:

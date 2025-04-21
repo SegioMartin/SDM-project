@@ -4,7 +4,7 @@
 PROJECT_NAME="misis-sdm"
 
 # Имя сервиса, который нужно пересобрать
-SERVER_SERVICE="server"
+SERVER_SERVICE="front"
 
 # Функция для пересборки сервиса server
 rebuild() {
@@ -32,7 +32,8 @@ restart() {
   docker-compose down
 
   # Удаляем образ server (если он существует)
-  docker rmi "${PROJECT_NAME}-${SERVER_SERVICE}" 2>/dev/null || true
+  docker rmi "${PROJECT_NAME}-front" 2>/dev/null || true
+  docker rmi "${PROJECT_NAME}-server" 2>/dev/null || true
 
   # Запускаем все сервисы
   docker-compose up -d

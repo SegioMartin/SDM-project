@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: misis-sdm-postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    volumes:
+      - misis_sdm_db_data:/var/lib/postgresql/data
+
+  pgAdmin:
+    image: dpage/pgadmin4
+    container_name: misis-sdm-pgAdmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+
+  server:
+    build: study-api
+    container_name: misis-sdm-server
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres  # <--- Имя сервиса db используется как имя хоста
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      DB_NAME: mydb
+      DB_PORT: 5432
+    ports:
+      - "8080:8080"
+
+volumes:
+  misis_sdm_db_data:

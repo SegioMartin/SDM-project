@@ -11,7 +11,7 @@ type Course struct {
 	Description string      `gorm:"default:null" json:"description"`
 	Teacher     string      `gorm:"default:null" json:"teacher"`
 	GroupId     string      `gorm:"not null" json:"groupId"`
-	Group       group.Group `gorm:"foreignKey:GroupId;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"group"`
+	Group       group.Group `gorm:"foreignKey:GroupId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"group"`
 }
 
 type CourseDTO struct {

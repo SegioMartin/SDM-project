@@ -43,11 +43,35 @@ func (s *service) Create(ctx context.Context, dto *EventDTO) (*Event, error) {
 }
 
 func (s *service) GetByID(ctx context.Context, id string) (*Event, error) {
-	return s.repo.GetByID(ctx, id)
+	event, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	fullEvent, err := s.repo.PreloadByID(ctx, event.ID, "Group")
+	if err != nil {
+		return nil, err
+	}
+
+	return fullEvent, nil
 }
 
 func (s *service) GetAll(ctx context.Context) ([]Event, error) {
-	return s.repo.GetAll(ctx)
+	events, err := s.repo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var fullEvents []Event
+	for _, c := range events {
+		fullEvent, err := s.repo.PreloadByID(ctx, c.ID, "Course")
+		if err != nil {
+			return nil, err
+		}
+		fullEvents = append(fullEvents, *fullEvent)
+	}
+
+	return fullEvents, nil
 }
 
 func (s *service) Update(ctx context.Context, dto *EventDTO, id string) (*Event, error) {

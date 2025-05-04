@@ -41,11 +41,35 @@ func (s *service) Create(ctx context.Context, dto *CourseDTO) (*Course, error) {
 }
 
 func (s *service) GetByID(ctx context.Context, id string) (*Course, error) {
-	return s.repo.GetByID(ctx, id)
+	course, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	fullCourse, err := s.repo.PreloadByID(ctx, course.ID, "Group")
+	if err != nil {
+		return nil, err
+	}
+
+	return fullCourse, nil
 }
 
 func (s *service) GetAll(ctx context.Context) ([]Course, error) {
-	return s.repo.GetAll(ctx)
+	courses, err := s.repo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var fullCourses []Course
+	for _, c := range courses {
+		fullCourse, err := s.repo.PreloadByID(ctx, c.ID, "Group")
+		if err != nil {
+			return nil, err
+		}
+		fullCourses = append(fullCourses, *fullCourse)
+	}
+
+	return fullCourses, nil
 }
 
 func (s *service) Update(ctx context.Context, dto *CourseDTO, id string) (*Course, error) {

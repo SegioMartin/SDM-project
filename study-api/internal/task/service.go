@@ -51,11 +51,35 @@ func (s *service) Create(ctx context.Context, dto *TaskDTO) (*Task, error) {
 }
 
 func (s *service) GetByID(ctx context.Context, id string) (*Task, error) {
-	return s.repo.GetByID(ctx, id)
+	task, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	fullTask, err := s.repo.PreloadByID(ctx, task.ID, "Course")
+	if err != nil {
+		return nil, err
+	}
+
+	return fullTask, nil
 }
 
 func (s *service) GetAll(ctx context.Context) ([]Task, error) {
-	return s.repo.GetAll(ctx)
+	tasks, err := s.repo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var fullTasks []Task
+	for _, c := range tasks {
+		fullTask, err := s.repo.PreloadByID(ctx, c.ID, "Course")
+		if err != nil {
+			return nil, err
+		}
+		fullTasks = append(fullTasks, *fullTask)
+	}
+
+	return fullTasks, nil
 }
 
 func (s *service) Update(ctx context.Context, dto *TaskDTO, id string) (*Task, error) {

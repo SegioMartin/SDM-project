@@ -47,11 +47,37 @@ func (s *service) Create(ctx context.Context, dto *MembershipDTO) (*Membership, 
 }
 
 func (s *service) GetByID(ctx context.Context, userId, groupId string) (*Membership, error) {
-	return s.repo.GetByCompositeID(ctx, "user_id", userId, "group_id", groupId)
+	member, err := s.repo.GetByCompositeID(ctx, "user_id", userId, "group_id", groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	fullMember, err := s.repo.PreloadByCompositeID(ctx, "user_id", member.UserID, "group_id", member.GroupID, "Role", "User", "Group")
+	if err != nil {
+		return nil, err
+	}
+
+	return fullMember, nil
+
 }
 
 func (s *service) GetAll(ctx context.Context) ([]Membership, error) {
-	return s.repo.GetAll(ctx)
+
+	members, err := s.repo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var fullMembers []Membership
+	for _, c := range members {
+		fullMember, err := s.repo.PreloadByCompositeID(ctx, "user_id", c.UserID, "group_id", c.GroupID, "Role", "User", "Group")
+		if err != nil {
+			return nil, err
+		}
+		fullMembers = append(fullMembers, *fullMember)
+	}
+
+	return fullMembers, nil
 }
 
 func (s *service) Update(ctx context.Context, dto *MembershipDTO, userId, groupId string) (*Membership, error) {

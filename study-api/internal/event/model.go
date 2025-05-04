@@ -14,7 +14,7 @@ type Event struct {
 	End         time.Time     `gorm:"default:null" json:"end"`
 	Location    string        `gorm:"not null" json:"location"`
 	CourseId    string        `gorm:"not null" json:"courseId"`
-	Course      course.Course `gorm:"foreignKey:CourseId;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"-"`
+	Course      course.Course `gorm:"foreignKey:CourseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"course"`
 }
 
 type EventDTO struct {

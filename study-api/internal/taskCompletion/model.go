@@ -13,8 +13,8 @@ type TaskCompletion struct {
 	Comment        string    `json:"comment"`
 	IsDone         bool      `gorm:"default:null" json:"is_done"`
 
-	User user.User `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Task task.Task `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	User user.User `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"user"`
+	Task task.Task `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"task"`
 }
 
 type TaskCompletionDTO struct {

@@ -14,9 +14,9 @@ type Attachment struct {
 	Path      string        `gorm:"not null" json:"path"`
 	CreatedAt time.Time     `json:"created_at"`
 	CourseId  *string       `json:"course_id"`
-	Course    course.Course `json:"course"`
+	Course    course.Course `gorm:"foreignKey:CourseId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"course"`
 	TaskId    *string       `json:"task_id"`
-	Task      task.Task     `json:"task"`
+	Task      task.Task     `gorm:"foreignKey:TaskId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"task"`
 
 	_ struct{} `gorm:"check:one_reference_check,check:(course_id IS NOT NULL)::int + (task_id IS NOT NULL)::int = 1"`
 }

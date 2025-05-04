@@ -47,11 +47,35 @@ func (s *service) Create(ctx context.Context, dto *TaskCompletionDTO) (*TaskComp
 }
 
 func (s *service) GetByID(ctx context.Context, userId, taskId string) (*TaskCompletion, error) {
-	return s.repo.GetByCompositeID(ctx, "user_id", userId, "task_id", taskId)
+	task, err := s.repo.GetByCompositeID(ctx, "user_id", userId, "task_id", taskId)
+	if err != nil {
+		return nil, err
+	}
+
+	fullTask, err := s.repo.PreloadByCompositeID(ctx, "user_id", task.UserID, "task_id", task.TaskID, "User", "Task")
+	if err != nil {
+		return nil, err
+	}
+
+	return fullTask, nil
 }
 
 func (s *service) GetAll(ctx context.Context) ([]TaskCompletion, error) {
-	return s.repo.GetAll(ctx)
+	tasks, err := s.repo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var fullTasks []TaskCompletion
+	for _, c := range tasks {
+		fullTask, err := s.repo.PreloadByCompositeID(ctx, "user_id", c.UserID, "task_id", c.TaskID, "User", "Task")
+		if err != nil {
+			return nil, err
+		}
+		fullTasks = append(fullTasks, *fullTask)
+	}
+
+	return fullTasks, nil
 }
 
 func (s *service) Update(ctx context.Context, dto *TaskCompletionDTO, userId, taskId string) (*TaskCompletion, error) {

@@ -40,7 +40,7 @@ func (h *Handler) GetByID(c echo.Context) error {
 
 	event, err := h.service.GetByID(c.Request().Context(), id)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, echo.Map{"error": "user not found"})
+		return c.JSON(http.StatusNotFound, echo.Map{"error": "event not found"})
 	}
 
 	return c.JSON(http.StatusOK, event)

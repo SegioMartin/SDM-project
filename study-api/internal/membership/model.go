@@ -12,9 +12,9 @@ type Membership struct {
 	GroupID string      `gorm:"primaryKey" json:"group_id"`
 	RoleID  string      `gorm:"not null" json:"role_id"`
 	Joined  time.Time   `json:"joined"`
-	User    user.User   `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Group   group.Group `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Role    role.Role   `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	User    user.User   `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"user"`
+	Group   group.Group `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"group"`
+	Role    role.Role   `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"role"`
 }
 
 type MembershipDTO struct {

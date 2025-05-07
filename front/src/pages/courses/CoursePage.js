@@ -1,53 +1,78 @@
 import React, { useEffect, useState } from 'react';
 import { getCourseById, updateCourse, deleteCourse } from '../../api/courses';
-import { getAttachmentsByCourse } from '../../api/attachments';
+import { getAllMemberships } from '../../api/memberships';
+import { getGroups } from '../../api/groups';
+import { getRoles } from '../../api/roles';
 import { useNavigate, useParams } from 'react-router-dom';
 import Modal from '../../components/Modal';
-import Attachments from '../../components/attachments/Attachments';
+import { useAuth } from '../../contexts/AuthContext';
 
 function CoursePage() {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
   const [originalCourse, setOriginalCourse] = useState(null);
-  const [attachments, setAttachments] = useState([]);
-  const [originalAttachments, setOriginalAttachments] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [error, setError] = useState(null);
+  const [groups, setGroups] = useState([]);
+  const [isGroupAdmin, setIsGroupAdmin] = useState(false);
+
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    getCourseById(id)
-      .then(async (res) => {
-        setCourse(res.data);
-        setOriginalCourse(res.data);
+    async function fetchData() {
+      try {
+        const courseRes = await getCourseById(id);
+        const courseData = courseRes.data;
+        setCourse(courseData);
+        setOriginalCourse(courseData);
 
-        const resAttachments = await getAttachmentsByCourse(id);
-        setAttachments(resAttachments.data);
-        setOriginalAttachments(resAttachments.data);
-      })
-      .catch((err) => {
-        console.error('Ошибка при получении курса:', err);
-        setError('Не удалось загрузить курс');
-      });
-  }, [id]);
+        const [membershipsRes, rolesRes] = await Promise.all([
+          getAllMemberships(),
+          getRoles()
+        ]);
+
+        const userMembership = membershipsRes.data.find(
+          (m) => m.user_id === user.id && m.group_id === courseData.groupId
+        );
+
+        const userRole = rolesRes.data.find(
+          (role) => role.id === userMembership?.role_id
+        );
+
+        setIsGroupAdmin(userRole?.name === 'admin');
+      } catch (err) {
+        console.error('Ошибка при получении данных:', err);
+        setError('Не удалось загрузить данные курса');
+      }
+
+      try {
+        const groupsRes = await getGroups();
+        setGroups(groupsRes.data);
+      } catch (err) {
+        console.error('Ошибка при получении групп:', err);
+      }
+    }
+
+    fetchData();
+  }, [id, user.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCourse(prev => {
+    setCourse((prev) => {
       const updated = { ...prev, [name]: value };
-      checkIfChanged(updated, attachments);
+      checkIfChanged(updated);
       return updated;
     });
   };
 
-  const checkIfChanged = (updatedCourse, updatedAttachments) => {
+  const checkIfChanged = (updatedCourse) => {
     const courseChanged = JSON.stringify(updatedCourse) !== JSON.stringify(originalCourse);
-    const attachmentsChanged = JSON.stringify(updatedAttachments) !== JSON.stringify(originalAttachments);
-    setIsChanged(courseChanged || attachmentsChanged);
+    setIsChanged(courseChanged);
   };
 
   const handleSave = () => {
@@ -58,7 +83,6 @@ function CoursePage() {
     updateCourse(id, course)
       .then(() => {
         setOriginalCourse(course);
-        setOriginalAttachments(attachments);
         setIsEditing(false);
         setIsChanged(false);
         setIsSaveModalOpen(false);
@@ -79,7 +103,6 @@ function CoursePage() {
 
   const handleConfirmCancel = () => {
     setCourse(originalCourse);
-    setAttachments(originalAttachments);
     setIsEditing(false);
     setIsChanged(false);
     setIsModalOpen(false);
@@ -113,6 +136,11 @@ function CoursePage() {
       setIsChanged(false);
     }
   }, [isEditing]);
+
+  const getGroupName = (groupId) => {
+    const group = groups.find((group) => group.id === groupId);
+    return group ? group.name : 'Не указана';
+  };
 
   if (error) {
     return <p style={{ color: 'red' }}>{error}</p>;
@@ -155,12 +183,12 @@ function CoursePage() {
               />
             </div>
             <div>
-              <label>ID группы:</label>
+              <label>Группа:</label>
               <input
                 type="text"
                 name="groupId"
-                value={course.groupId}
-                onChange={handleChange}
+                value={getGroupName(course.groupId)}
+                disabled
               />
             </div>
           </div>
@@ -169,20 +197,10 @@ function CoursePage() {
             <div><strong>Название:</strong> {course.name}</div>
             <div><strong>Описание:</strong> {course.description}</div>
             <div><strong>Преподаватель:</strong> {course.teacher}</div>
-            <div><strong>Группа:</strong> {course.groupId || 'Не указана'}</div>
+            <div><strong>Группа:</strong> {getGroupName(course.groupId) || 'Не указана'}</div>
           </div>
         )}
       </div>
-
-      <Attachments
-        courseId={id}
-        isEditing={isEditing}
-        attachments={attachments}
-        setAttachments={(newList) => {
-          setAttachments(newList);
-          checkIfChanged(course, newList);
-        }}
-      />
 
       <div>
         {!isEditing && (
@@ -192,10 +210,10 @@ function CoursePage() {
           <>
             <button onClick={handleSave} disabled={!isChanged}>Сохранить</button>
             <button onClick={handleCancel}>Отменить</button>
-            <button onClick={handleDelete}>Удалить курс</button>
+            {isGroupAdmin && <button onClick={handleDelete}>Удалить курс</button>}
           </>
         ) : (
-          <button onClick={() => setIsEditing(true)}>Редактировать</button>
+          isGroupAdmin && <button onClick={() => setIsEditing(true)}>Редактировать</button>
         )}
       </div>
 

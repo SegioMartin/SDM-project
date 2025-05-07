@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getEventById, updateEvent, deleteEvent } from '../../api/events';
-import { getCourseById, getCourses } from '../../api/courses';
+import { getAllMemberships } from '../../api/memberships';
+import { getRoles } from '../../api/roles';
+import { getCourses } from '../../api/courses';
+import { useAuth } from '../../contexts/AuthContext';
 import Modal from '../../components/Modal';
 
 export default function EventDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [event, setEvent] = useState(null);
   const [originalEvent, setOriginalEvent] = useState(null);
@@ -16,8 +20,10 @@ export default function EventDetailsPage() {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  const [courses, setCourses] = useState([]);
+  const [memberships, setMemberships] = useState([]);
+  const [adminCourseIds, setAdminCourseIds] = useState([]);
   const [courseName, setCourseName] = useState('');
-  const [courseList, setCourseList] = useState([]);
 
   useEffect(() => {
     getEventById(id).then(res => {
@@ -27,35 +33,72 @@ export default function EventDetailsPage() {
   }, [id]);
 
   useEffect(() => {
-    if (event?.courseId && !isEditing) {
-      getCourseById(event.courseId).then(res => setCourseName(res.data.name));
+    async function loadData() {
+      const [coursesRes, membershipsRes, rolesRes] = await Promise.all([
+        getCourses(),
+        getAllMemberships(),
+        getRoles(),
+      ]);
+    
+      const allCourses = coursesRes.data;
+      const allMemberships = membershipsRes.data;
+      const allRoles = rolesRes.data;
+    
+      setCourses(allCourses);
+      setMemberships(allMemberships);
+    
+      const currentEvent = await getEventById(id);
+      const eventData = currentEvent.data;
+      setEvent(eventData);
+      setOriginalEvent(eventData);
+    
+      const course = allCourses.find(c => c.id === eventData.courseId);
+      if (course) setCourseName(course.name);
+    
+      const groupId = course?.groupId;
+    
+      const adminRoleId = allRoles.find(r => r.name === 'admin')?.id;
+    
+      const isAdmin = allMemberships.some(m =>
+        m.user_id === user.id &&
+        m.group_id === groupId &&
+        m.role_id === adminRoleId
+      );
+    
+      if (isAdmin) {
+        setAdminCourseIds([eventData.courseId]);
+      }
     }
-  }, [event, isEditing]);
+    
+    if (user?.id) {
+      loadData();
+    }
+  }, [user?.id]);
 
   useEffect(() => {
-    if (isEditing) {
-      getCourses().then(res => setCourseList(res.data));
+    if (event?.courseId && !isEditing) {
+      const course = courses.find(c => c.id === event.courseId);
+      if (course) setCourseName(course.name);
     }
-  }, [isEditing]);
+  }, [event, isEditing, courses]);
+
+  const isAdminForEvent = event && adminCourseIds.includes(event.courseId);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
+
     let updatedValue = value;
-  
-    // Преобразуем datetime-local в ISO-строку
     if (name === 'start') {
       const localDate = new Date(value);
-      updatedValue = localDate.toISOString(); // ISO формат
+      updatedValue = localDate.toISOString();
     }
-  
+
     setEvent(prev => {
       const updated = { ...prev, [name]: updatedValue };
       setIsChanged(JSON.stringify(updated) !== JSON.stringify(originalEvent));
       return updated;
     });
   };
-  
 
   const handleSave = () => setIsSaveModalOpen(true);
 
@@ -93,16 +136,13 @@ export default function EventDetailsPage() {
       .catch(() => alert('Не удалось удалить событие'));
   };
 
-  // Форматируем дату для отображения
   const formatDateTime = (ts) => ts ? new Date(ts).toLocaleString('ru-RU') : '';
-
-  // Форматируем ISO дату в строку для поля datetime-local
   const formatDatetimeLocal = (isoString) => {
     if (!isoString) return '';
     const date = new Date(isoString);
     const tzOffset = date.getTimezoneOffset() * 60000;
     const local = new Date(date - tzOffset);
-    return local.toISOString().slice(0, 16); // 'YYYY-MM-DDTHH:mm'
+    return local.toISOString().slice(0, 16);
   };
 
   if (!event) return <p>Загрузка...</p>;
@@ -110,7 +150,7 @@ export default function EventDetailsPage() {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">
-        {isEditing ? 'Редактирование события' : 'Страница события'}
+        {isEditing ? `Редактирование события для курса "${courseName}"` : 'Страница события'}
       </h1>
 
       {isEditing ? (
@@ -144,19 +184,10 @@ export default function EventDetailsPage() {
             onChange={handleChange}
             className="block mb-2 border p-1"
           />
-          <select
-            name="courseId"
-            value={event.courseId}
-            onChange={handleChange}
-            className="block mb-2 border p-1"
-          >
-            <option value="" disabled hidden>Выберите курс</option>
-            {courseList.map(course => (
-              <option key={course.id} value={course.id}>
-                {course.name}
-              </option>
-            ))}
-          </select>
+          {/* Курс не меняется, но показывается */}
+          <div className="mb-2">
+            <strong>Курс:</strong> {courseName}
+          </div>
         </>
       ) : (
         <>
@@ -174,7 +205,9 @@ export default function EventDetailsPage() {
         {!isEditing ? (
           <>
             <button onClick={() => navigate('/events')}>Назад</button>
-            <button onClick={() => setIsEditing(true)}>Редактировать</button>
+            {isAdminForEvent && (
+              <button onClick={() => setIsEditing(true)}>Редактировать</button>
+            )}
           </>
         ) : (
           <>

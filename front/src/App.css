@@ -1,38 +1,197 @@
-.App {
-  text-align: center;
+/* App.css */
+
+/* Стиль для ссылок */
+a {
+  text-decoration: none;
+  color: #28a745;  /* Синий цвет для ссылок */
 }
 
-.App-logo {
-  height: 40vmin;
+a:hover {
+  color: #218838;  /* Темно-синий цвет при наведении */
+}
+
+/* Стиль для заголовков */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Arial', sans-serif;
+  color: #333;  /* Темный цвет текста для заголовков */
+  margin-bottom: 0.5em;
+}
+
+/* Стиль для кнопок */
+button {
+  background-color: #28a745;  /* Зеленый фон */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.delete{
+  background-color: #dc0202;
+}
+
+button:hover {
+  background-color: #218838;  /* Темнее зеленый при наведении */
+}
+
+button:disabled {
+  background-color: #0f451b;  /* Темнее зеленый при наведении */
+  color: grey;
+  cursor: not-allowed;
+}
+
+
+
+
+ul {
+  list-style-type: none; /* Убираем стандартные маркеры списка */
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Отступы между элементами */
+  font-family: 'Arial', sans-serif;
+}
+
+li {
+  background-color: #f4f4f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Плавные анимации */
+}
+
+li:hover {
+  background-color: #a7febf; /* Цвет фона при наведении */
+  transform: scale(1.05); /* Увеличение элемента при наведении */
+}
+
+li a {
+  text-decoration: none; /* Убираем подчеркивание */
+  color: #333;
+  font-weight: bold;
+  display: block; /* Для удобства кликабельности на всю ширину */
+  padding: 5px 0;
+}
+
+li a:hover {
+  color: #0056b3; /* Цвет ссылки при наведении */
+}
+
+
+
+
+
+/* Стиль для инпутов */
+input {
+  width: 100%;
+  padding: 10px 15px;
+  margin: 5px 0 ;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Стилизация инпута при фокусе */
+input:focus {
+  border-color: #0056b3;
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+}
+
+/* Стилизация инпута при ошибке */
+input.error {
+  border-color: #e74c3c;
+  background-color: #fce4e4;
+}
+
+input.error:focus {
+  border-color: #c0392b;
+  box-shadow: 0 0 5px rgba(192, 57, 43, 0.5);
+}
+
+/* Стилизация меток (labels) для инпутов */
+.custom-input-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  color: #333;
+}
+
+/* Стиль для кнопок отправки формы */
+.custom-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #0056b3;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.custom-button:hover {
+  background-color: #00408f;
+}
+
+.custom-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+
+
+/* Основной стиль для dropdown */
+.dropdown-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Оформление select как обычный список */
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  -webkit-appearance: none; /* Убирает стили браузера для select */
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Стиль для вывода стрелочки */
+.dropdown-container::after {
+  content: "▼";
+  font-size: 1.2rem;
+  position: absolute;
+  right: 20px;
+  top: 20px;
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Опционально: стилизация элементов select (option) */
+select option {
+  padding: 10px;
+  background-color: #fff;
+  color: #333;
+  border: none;
+  font-size: 1rem;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Стиль для фокуса */
+select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}

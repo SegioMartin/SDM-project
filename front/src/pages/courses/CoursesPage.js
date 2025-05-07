@@ -7,9 +7,6 @@ function CoursesPage() {
     <div>
         <h1>Список курсов</h1>
         <CourseList />
-        <Link to="/add-course">
-        <button>Добавить курс</button>
-        </Link>
     </div>);
 }
 

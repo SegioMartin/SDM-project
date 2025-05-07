@@ -1,0 +1,23 @@
+.user{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.user_info{
+    display: flex;
+    flex-direction: column;
+}
+.email{
+    font-size: 10px;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;    
+}
+
+.buttons{
+    display: flex;
+    gap: 20px;  
+}

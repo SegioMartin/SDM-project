@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createEvent } from '../../api/events';
 import { getCourses } from '../../api/courses';
+import { getAllMemberships } from '../../api/memberships';
+import { getRoles } from '../../api/roles';
+import { useAuth } from '../../contexts/AuthContext';
 
 function AddEventForm() {
   const [form, setForm] = useState({
@@ -15,12 +18,46 @@ function AddEventForm() {
   const [courses, setCourses] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    getCourses()
-      .then(res => setCourses(res.data))
-      .catch(() => setError('Не удалось загрузить курсы'));
-  }, []);
+    async function loadData() {
+      try {
+        const [coursesRes, membershipsRes, rolesRes] = await Promise.all([
+          getCourses(),
+          getAllMemberships(),
+          getRoles(),
+        ]);
+
+        const allCourses = coursesRes.data;
+        const allMemberships = membershipsRes.data;
+        const allRoles = rolesRes.data;
+
+        // Получаем id роли администратора
+        const adminRoleId = allRoles.find(r => r.name === 'admin')?.id;
+
+        // Фильтруем курсы, для которых текущий пользователь является администратором
+        const userAdminCourses = allCourses.filter(course => {
+          const groupId = course.groupId;
+          const isAdmin = allMemberships.some(
+            membership =>
+              membership.user_id === user.id &&
+              membership.group_id === groupId &&
+              membership.role_id === adminRoleId
+          );
+          return isAdmin;
+        });
+
+        setCourses(userAdminCourses); // Отображаем только те курсы, где пользователь администратор
+      } catch (err) {
+        setError('Не удалось загрузить курсы');
+      }
+    }
+
+    if (user?.id) {
+      loadData();
+    }
+  }, [user?.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

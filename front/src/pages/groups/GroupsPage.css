@@ -1,0 +1,15 @@
+.group_info{
+    display: flex;
+    flex-direction: column;
+}
+
+.self_group_info{
+    display: flex;
+    justify-content: space-between;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;  
+}

@@ -7,7 +7,7 @@ import { getCourses } from '../../api/courses';
 import { useAuth } from '../../contexts/AuthContext';
 import Modal from '../../components/Modal';
 
-export default function EventDetailsPage() {
+export default function EventPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -26,63 +26,54 @@ export default function EventDetailsPage() {
   const [courseName, setCourseName] = useState('');
 
   useEffect(() => {
-    getEventById(id).then(res => {
-      setEvent(res.data);
-      setOriginalEvent(res.data);
-    });
-  }, [id]);
-
-  useEffect(() => {
-    async function loadData() {
-      const [coursesRes, membershipsRes, rolesRes] = await Promise.all([
-        getCourses(),
-        getAllMemberships(),
-        getRoles(),
-      ]);
-    
-      const allCourses = coursesRes.data;
-      const allMemberships = membershipsRes.data;
-      const allRoles = rolesRes.data;
-    
-      setCourses(allCourses);
-      setMemberships(allMemberships);
-    
-      const currentEvent = await getEventById(id);
-      const eventData = currentEvent.data;
-      setEvent(eventData);
-      setOriginalEvent(eventData);
-    
-      const course = allCourses.find(c => c.id === eventData.courseId);
-      if (course) setCourseName(course.name);
-    
-      const groupId = course?.groupId;
-    
-      const adminRoleId = allRoles.find(r => r.name === 'admin')?.id;
-    
-      const isAdmin = allMemberships.some(m =>
-        m.user_id === user.id &&
-        m.group_id === groupId &&
-        m.role_id === adminRoleId
-      );
-    
-      if (isAdmin) {
-        setAdminCourseIds([eventData.courseId]);
+    if (id && user?.id) {
+      async function loadData() {
+        try {
+          console.log("Запрос к API для получения данных события с ID:", id); // Логируем ID события
+  
+          // Загружаем событие, курсы, участников и роли
+          const [eventRes, coursesRes, membershipsRes, rolesRes] = await Promise.all([
+            getEventById(id),
+            getCourses(),
+            getAllMemberships(),
+            getRoles(),
+          ]);
+  
+          console.log("Ответ от API:", eventRes, coursesRes, membershipsRes, rolesRes); // Логируем ответы
+  
+          const eventData = eventRes.data;
+          const allCourses = coursesRes.data;
+          const allMemberships = membershipsRes.data;
+          const allRoles = rolesRes.data;
+  
+          setEvent(eventData);
+          setOriginalEvent(eventData);
+  
+          const course = allCourses.find(c => c.id === eventData.courseId);
+          if (course) setCourseName(course.name);
+  
+          const groupId = course?.groupId;
+          const adminRoleId = allRoles.find(r => r.name === 'admin')?.id;
+  
+          const isAdmin = allMemberships.some(m =>
+            m.user_id === user.id &&
+            m.group_id === groupId &&
+            m.role_id === adminRoleId
+          );
+  
+          if (isAdmin) {
+            setAdminCourseIds([eventData.courseId]);
+          }
+  
+        } catch (err) {
+          console.error('Failed to load data:', err); // Логируем ошибки запроса
+        }
       }
-    }
-    
-    if (user?.id) {
+  
       loadData();
     }
-  }, [user?.id]);
-
-  useEffect(() => {
-    if (event?.courseId && !isEditing) {
-      const course = courses.find(c => c.id === event.courseId);
-      if (course) setCourseName(course.name);
-    }
-  }, [event, isEditing, courses]);
-
-  const isAdminForEvent = event && adminCourseIds.includes(event.courseId);
+  }, [id, user?.id]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -205,7 +196,7 @@ export default function EventDetailsPage() {
         {!isEditing ? (
           <>
             <button onClick={() => navigate('/events')}>Назад</button>
-            {isAdminForEvent && (
+            {adminCourseIds.includes(event?.courseId) && (
               <button onClick={() => setIsEditing(true)}>Редактировать</button>
             )}
           </>

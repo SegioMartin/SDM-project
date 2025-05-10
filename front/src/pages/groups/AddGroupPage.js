@@ -4,7 +4,7 @@ import { createGroup } from '../../api/groups';
 import { createMembership } from '../../api/memberships';
 import { useAuth } from '../../contexts/AuthContext';
 import { getRoles, createRole } from '../../api/roles';
-import './AddGroupPage.css';
+import './AddForm.css';
 
 function AddGroupPage() {
   const [formData, setFormData] = useState({
@@ -60,6 +60,7 @@ function AddGroupPage() {
   return (
     <form onSubmit={handleSubmit} className="form">
       <button type="button" onClick={() => navigate('/groups')}>Назад к списку групп</button>
+      <h1>Новая группа</h1>
       <div className='input'>
         <div className='inputs'>
           <input

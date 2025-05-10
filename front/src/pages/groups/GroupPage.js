@@ -197,20 +197,27 @@ function GroupPage() {
   const nonMembers = users.filter(u => !memberUserIds.includes(u.id));
 
   return (
-    <div>
+    <div className="edit_form">
       <div className='header'>
+        {!isEditing && <button onClick={() => navigate('/groups')}>Назад к списку групп</button>}
         <h1>{isEditing ? 'Редактирование группы' : group.name}</h1>
         <div>
           {isEditing ? (
-            <>
+            <div className='form_inputs'>
               <label>Название:</label>
               <input name="name" value={group.name} onChange={handleChange} />
               <label>Описание:</label>
               <textarea name="description" value={group.description} onChange={handleChange} />
-            </>
+              <div className="buttons">
+                <button onClick={handleSave} disabled={!isChanged}>Сохранить</button>
+                <button onClick={handleCancel}>Отменить</button>
+                <button onClick={handleDelete} className='delete'>Удалить группу</button>
+              </div>
+            </div>
           ) : (
             <>
-              <p>{group.description}</p>
+              <p className='comment'>{group.description}</p>
+              {isAdmin && !isEditing && <button onClick={() => setIsEditing(true)}>Редактировать</button>}
             </>
           )}
         </div>
@@ -225,7 +232,7 @@ function GroupPage() {
               <li key={m.user_id} className="user">
                 <div className='user_info'>
                   <p>{u?.name || 'Без имени'}</p>
-                  <p className='email'>{u?.email} </p>
+                  <small className='email'>{u?.email} </small>
                 </div>
                 
                 {isEditing ? (
@@ -249,7 +256,7 @@ function GroupPage() {
                 <li key={u.id} className="user">
                   <div className='user_info'>
                     <p>{u.name}</p>
-                    <p className='email'>{u.email}</p>
+                    <small>{u.email}</small>
                   </div>
                   <button onClick={() => handleAddMember(u.id)}>Добавить</button>
                 </li>
@@ -257,18 +264,6 @@ function GroupPage() {
             </ul>
           </>
         )}
-
-        <div className="buttons">
-          {!isEditing && <button onClick={() => navigate('/groups')}>Назад</button>}
-          {isEditing && (
-            <>
-              <button onClick={handleSave} disabled={!isChanged}>Сохранить</button>
-              <button onClick={handleCancel}>Отменить</button>
-              <button onClick={handleDelete} className='delete'>Удалить группу</button>
-            </>
-          )}
-          {isAdmin && !isEditing && <button onClick={() => setIsEditing(true)}>Редактировать</button>}
-        </div>
       </div>
       <Modal
         isOpen={isModalOpen}

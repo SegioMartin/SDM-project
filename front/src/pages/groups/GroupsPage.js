@@ -4,7 +4,7 @@ import { getGroups } from '../../api/groups';
 import { getMembershipByUserAndGroup } from '../../api/memberships';
 import { getRoles } from '../../api/roles';
 import { useAuth } from '../../contexts/AuthContext';
-import './GroupsPage.css';
+import './ListPage.css';
 
 function GroupsPage() {
   const { user } = useAuth();

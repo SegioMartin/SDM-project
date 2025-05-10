@@ -25,10 +25,10 @@ function EventsPage() {
           getCourses(),
         ]);
 
-        const allEvents = eventsRes.data;
-        const allMemberships = membershipsRes.data;
-        const allRoles = rolesRes.data;
-        const allCourses = coursesRes.data;
+        const allEvents = eventsRes.data ?? [];
+        const allMemberships = membershipsRes.data ?? [];
+        const allRoles = rolesRes.data ?? [];
+        const allCourses = coursesRes.data ?? [];
 
         setCourses(allCourses);
 
@@ -70,11 +70,6 @@ function EventsPage() {
     return course ? course.name : 'Не указан';
   };
 
-  const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleString();
-  };
-
   const formatDateAndTime = (dateStr) => {
     const date = new Date(dateStr);
     const formattedDate = date.toLocaleDateString(); // Форматируем только дату
@@ -84,7 +79,7 @@ function EventsPage() {
 
   return (
     <div>
-      <h1>Список событий</h1>
+      <h1>Мои события</h1>
       <div className="content">
         {isAdmin && (
           <Link to="/add-event">

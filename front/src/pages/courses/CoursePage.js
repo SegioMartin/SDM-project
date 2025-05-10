@@ -6,6 +6,7 @@ import { getRoles } from '../../api/roles';
 import { useNavigate, useParams } from 'react-router-dom';
 import Modal from '../../components/Modal';
 import { useAuth } from '../../contexts/AuthContext';
+import './CoursePage.css';
 
 function CoursePage() {
   const { id } = useParams();
@@ -151,11 +152,22 @@ function CoursePage() {
   }
 
   return (
-    <div>
-      <h1>{isEditing ? 'Редактирование курса' : 'Страница курса'}</h1>
-      <div>
+    <div className='course_edit_form'>
+      <div className='header'>
+        {!isEditing && (
+          <button onClick={() => navigate('/courses')}>Назад к списку курсов</button>
+        )}
+        <div className='course_header'>
+          <div className='header_info'>
+            <h1>{isEditing ? 'Редактирование курса' : course.name}</h1>
+            {!isEditing && ( <small>{getGroupName(course.groupId) || 'Не указана'}</small> )}
+          </div>
+          {!isEditing && ( <p>{course.teacher}</p> )}
+        </div>
+      </div>
+      <div className='course_form'>
         {isEditing ? (
-          <div>
+          <div className='inputs'>
             <div>
               <label>Название курса:</label>
               <input
@@ -193,30 +205,24 @@ function CoursePage() {
             </div>
           </div>
         ) : (
-          <div>
-            <div><strong>Название:</strong> {course.name}</div>
-            <div><strong>Описание:</strong> {course.description}</div>
-            <div><strong>Преподаватель:</strong> {course.teacher}</div>
-            <div><strong>Группа:</strong> {getGroupName(course.groupId) || 'Не указана'}</div>
+          <div >
+            <p className='comment'>{course.description}</p>
           </div>
         )}
-      </div>
 
-      <div>
-        {!isEditing && (
-          <button onClick={() => navigate('/courses')}>Назад к списку курсов</button>
-        )}
-        {isEditing ? (
-          <>
-            <button onClick={handleSave} disabled={!isChanged}>Сохранить</button>
-            <button onClick={handleCancel}>Отменить</button>
-            {isGroupAdmin && <button onClick={handleDelete}>Удалить курс</button>}
-          </>
-        ) : (
-          isGroupAdmin && <button onClick={() => setIsEditing(true)}>Редактировать</button>
-        )}
+        <div className='buttons'>
+          {isEditing ? (
+            <>
+              <button onClick={handleSave} disabled={!isChanged}>Сохранить</button>
+              <button onClick={handleCancel}>Отменить</button>
+              {isGroupAdmin && <button onClick={handleDelete} className='delete'>Удалить курс</button>}
+            </>
+          ) : (
+            isGroupAdmin && <button onClick={() => setIsEditing(true)}>Редактировать</button>
+          )}
+        </div>
       </div>
-
+      
       <Modal
         isOpen={isModalOpen}
         title="Вы уверены?"

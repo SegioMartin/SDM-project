@@ -1,0 +1,18 @@
+.header_info{
+    display: flex;
+    align-items:first baseline;
+    gap: 10px;
+}
+
+.course_header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.course_form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

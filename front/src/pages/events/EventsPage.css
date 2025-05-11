@@ -1,0 +1,33 @@
+.event_info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .secondary_info{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .event-date-time {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.9rem;
+    color: #555;
+    align-items: flex-end;
+  }
+  
+  .event-date-time small {
+    margin: 0;
+  }
+  

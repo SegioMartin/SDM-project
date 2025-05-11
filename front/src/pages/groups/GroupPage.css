@@ -1,0 +1,33 @@
+.user{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 50px;
+}
+.user_info{
+    display: flex;
+    flex-direction: column;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: relative;
+}
+
+.buttons{
+    display: flex;
+    gap: 20px;  
+}
+
+.form_inputs{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edit_form{
+    display: flex;
+    flex-direction: column;
+}

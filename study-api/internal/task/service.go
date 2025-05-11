@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 	"errors"
+	"time"
 )
 
 type Service interface {
@@ -102,7 +103,8 @@ func (s *service) Update(ctx context.Context, dto *TaskDTO, id string) (*Task, e
 	if dto.Description != "" {
 		task.Description = dto.Description
 	}
-	if dto.Deadline != "" {
+	var start = time.Time{}
+	if dto.Deadline != start {
 		task.Deadline = dto.Deadline
 	}
 	if dto.Priority != "" {

@@ -1,64 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
+import GroupsPage from './pages/groups/GroupsPage';
+import AddGroupPage from './pages/groups/AddGroupPage';
+import GroupPage from './pages/groups/GroupPage';
 
+import CoursesPage from './pages/courses/CoursesPage';
+import AddCoursePage from './pages/courses/AddCoursePage';
+import CoursePage from './pages/courses/CoursePage';
+
+import EventsPage from './pages/events/EventsPage';
+import AddEventPage from './pages/events/AddEventPage';
+import EventPage from './pages/events/EventPage';
+
+import Sidebar from './components/Sidebar';
+
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+
+function ProtectedRoute({ children }) {
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/login" />;
+}
+
+function Layout() {
+  return (
+    <div style={{ display: 'flex' }}>
+      <Sidebar />
+      <div style={{ marginLeft: '250px', padding: '20px', width: '100%' }}>
+        <Routes>
+          <Route path="/groups" element={<GroupsPage />} />
+          <Route path="/add-group" element={<AddGroupPage />} />
+          <Route path="/group/:id" element={<GroupPage />} />
+
+          <Route path="/courses" element={<CoursesPage />} />
+          <Route path="/add-course/:groupId" element={<AddCoursePage />} />
+          <Route path="/course/:id" element={<CoursePage />} />
+
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/add-event" element={<AddEventPage />} />
+          <Route path="/event/:id" element={<EventPage />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
 
 function App() {
-  const [courseData, setCourseData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      console.log('Address:')
-      console.log('http://server:8080/api/courses');
-      try {
-        const response = await fetch('http://172.18.0.4:8080/api/courses');
-        // const response = await fetch('http://server:8080/api/courses');
-        console.log(response)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.text();
-        setCourseData(data);
-        setError(null);
-      } catch (e) {
-        setError(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn meow
-        </a>
-        {loading && <p>Загрузка данных...</p>}
-        {error && <p>Ошибка: {error.message}</p>}
-        {courseData && (
-          <pre style={{ textAlign: 'left' }}>
-            {courseData}
-          </pre>
-        )}
-      </header>
-    </div>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/*" element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

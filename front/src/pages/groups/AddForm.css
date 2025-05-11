@@ -1,0 +1,13 @@
+.input{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: self-end;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: self-start;
+}

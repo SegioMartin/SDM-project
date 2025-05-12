@@ -236,7 +236,7 @@ function GroupPage() {
                 </div>
                 
                 {isEditing ? (
-                  <select value={role} onChange={(e) => handleRoleChange(m.user_id, e.target.value)} disabled={!isAdmin}>
+                  <select value={role} onChange={(e) => handleRoleChange(m.user_id, e.target.value)} disabled={!isAdmin} className='role_select'>
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                   </select>

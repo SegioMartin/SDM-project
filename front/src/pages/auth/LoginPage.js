@@ -38,7 +38,7 @@ const LoginPage = () => {
 
   return (
     <div className='auth'>
-      <h1>Регистрация</h1>
+      <h1>Вход</h1>
       <form onSubmit={handleLogin} className='auth_form'>
         <div className='inputs'>
           <input name="email" value={form.email} onChange={handleChange} placeholder="Email" />

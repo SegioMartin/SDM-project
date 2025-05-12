@@ -90,7 +90,7 @@ function EventsPage() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
         {events.length === 0 ? (
-          <p>Нет доступных событий</p>
+          <p className='comment'>Нет доступных событий</p>
         ) : (
           <ul>
             {events.map(event => {

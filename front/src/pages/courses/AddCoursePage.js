@@ -52,7 +52,7 @@ function AddCoursePage() {
       {loadError && <p style={{ color: 'red' }}>{loadError}</p>}
       <form onSubmit={handleSubmit} className='form'>
         <button onClick={() => navigate('/courses')}>Назад к списку курсов</button>
-        <h1>Новый курс для «{groupName || 'Загрузка...'}»</h1>
+        <h1>Новый курс для {groupName || 'Загрузка...'}</h1>
         <div className='input'>
           <div className='inputs'>
             <input

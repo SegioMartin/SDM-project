@@ -1,121 +1,151 @@
-/* App.css */
+:root {
+  /* Цвета */
+  --color-bg-dark: #121212;
+  --color-text-light: white;
+  --color-text-dark: #333;
+  --color-link: #28a745;
+  --color-link-hover: #218838;
+  --color-btn: #28a745;
+  --color-btn-hover: #218838;
+  --color-btn-disabled: #0f451b;
+  --color-delete: #dc0202;
+  --color-input-bg: #f9f9f9;
+  --color-input-focus: #fff;
+  --color-error: #e74c3c;
+  --color-error-bg: #fce4e4;
+  --color-error-focus: #c0392b;
+  --color-select-hover: #a7febf;
+  --color-primary-focus: #007bff;
+  --color-primary-shadow: rgba(0, 123, 255, 0.3);
+  --color-button-alt: #0056b3;
+  --color-button-alt-hover: #00408f;
+  --color-button-alt-disabled: #cccccc;
 
-body {
-  background-color: #121212;  /* Тёмный фон */
-  color: white;  /* Белый текст на тёмном фоне */
-  font-family: Arial, sans-serif; /* Шрифт */
+  /* Шрифт */
+  --font-main: 'Arial', sans-serif;
+
+  /* Скругление */
+  --radius: 20px;
+  --radius-small: 8px;
+
+  /* Прочее */
+  --transition-fast: 0.3s ease;
+  --transition-focus: 0.2s ease;
 }
 
-/* Стиль для ссылок */
+body {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-light);
+  font-family: var(--font-main);
+}
+
 a {
   text-decoration: none;
-  color: #28a745;  /* Синий цвет для ссылок */
+  color: var(--color-link);
 }
 
 a:hover {
-  color: #218838;  /* Темно-синий цвет при наведении */
+  color: var(--color-link-hover);
 }
 
-/* Стиль для заголовков */
 h1, h2, h3, h4, h5, h6, p, span, small {
-  font-family: 'Arial', sans-serif;
-  color: #333;  /* Темный цвет текста для заголовков */
+  font-family: var(--font-main);
+  color: var(--color-text-dark);
   margin-bottom: 0.5em;
 }
 
-/* Стиль для кнопок */
+h1, h2, h3, .comment{
+  color: var(--color-text-light);
+}
+
 button {
-  background-color: #28a745;  /* Зеленый фон */
-  color: white;
+  background-color: var(--color-btn);
+  color: var(--color-text-light);
   border: none;
   padding: 10px 20px;
   font-size: 1rem;
   cursor: pointer;
-  border-radius: 20px;
+  border-radius: var(--radius);
+  transition: background-color var(--transition-fast);
 }
-.delete{
-  background-color: #dc0202;
+
+.delete {
+  background-color: var(--color-delete);
 }
 
 button:hover {
-  background-color: #218838;  /* Темнее зеленый при наведении */
+  background-color: var(--color-btn-hover);
 }
 
 button:disabled {
-  background-color: #0f451b;  /* Темнее зеленый при наведении */
+  background-color: var(--color-btn-disabled);
   color: grey;
   cursor: not-allowed;
 }
 
-
-
-
 ul {
-  list-style-type: none; /* Убираем стандартные маркеры списка */
+  list-style-type: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Отступы между элементами */
-  font-family: 'Arial', sans-serif;
+  gap: 10px;
+  font-family: var(--font-main);
 }
 
 li {
-  background-color: #f4f4f9;
-  border-radius: 20px;
+  background-color: var(--color-input-bg);
+  border-radius: var(--radius);
   padding: 15px;
-  transition: background-color 0.3s ease, transform 0.3s ease; /* Плавные анимации */
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 li:hover {
-  background-color: #a7febf; /* Цвет фона при наведении */
-  transform: scale(1.05); /* Увеличение элемента при наведении */
+  background-color: var(--color-select-hover);
+  transform: scale(1.03);
 }
 
 li a {
-  text-decoration: none; /* Убираем подчеркивание */
-  color: #333;
+  text-decoration: none;
+  color: var(--color-text-dark);
   font-weight: bold;
-  display: block; /* Для удобства кликабельности на всю ширину */
+  display: block;
   padding: 5px 0;
 }
 
 li a:hover {
-  color: #0056b3; /* Цвет ссылки при наведении */
+  color: #0056b3;
 }
 
-
-
-
-
-/* Стиль для инпутов */
-input {
+input, textarea, select {
   width: 100%;
   padding: 10px 15px;
-  margin: 5px 0 ;
-  font-size: 16px;
-  border-radius: 20px;
-  background-color: #f9f9f9;
-  transition: all 0.3s ease;
+  margin: 5px 0;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  background-color: var(--color-input-bg);
+  font-family: inherit;
+  color: var(--color-text-dark);
   box-sizing: border-box;
+  transition: border-color var(--transition-focus), box-shadow var(--transition-focus);
 }
 
-/* Стилизация инпута при фокусе */
-input:focus {
-  border-color: #0056b3;
-  background-color: #fff;
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary-focus);
+  background-color: var(--color-input-focus);
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+  box-shadow: 0 0 5px var(--color-primary-shadow);
 }
 
-/* Стилизация инпута при ошибке */
 input.error {
-  border-color: #e74c3c;
-  background-color: #fce4e4;
+  border-color: var(--color-error);
+  background-color: var(--color-error-bg);
 }
 
 input.error:focus {
-  border-color: #c0392b;
+  border-color: var(--color-error-focus);
   box-shadow: 0 0 5px rgba(192, 57, 43, 0.5);
 }
 
@@ -141,61 +171,52 @@ textarea:focus {
   box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
 }
 
-/* Стилизация меток (labels) для инпутов */
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
 label {
   font-weight: bold;
   margin-bottom: 5px;
   display: block;
-  color: #333;
+  color: var(--color-text-light);
 }
 
-/* Стиль для кнопок отправки формы */
 .custom-button {
   padding: 10px 20px;
   border: none;
-  border-radius: 8px;
-  background-color: #0056b3;
-  color: white;
+  border-radius: var(--radius-small);
+  background-color: var(--color-button-alt);
+  color: var(--color-text-light);
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color var(--transition-fast);
 }
 
 .custom-button:hover {
-  background-color: #00408f;
+  background-color: var(--color-button-alt-hover);
 }
 
 .custom-button:disabled {
-  background-color: #cccccc;
+  background-color: var(--color-button-alt-disabled);
   cursor: not-allowed;
 }
 
+select option {
+  padding: 10px;
+  background-color: var(--color-input-focus);
+  color: var(--color-text-dark);
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
 
-
-
-/* Основной стиль для dropdown */
 .dropdown-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* Оформление select как обычный список */
-select {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0 ;
-  font-size: 1rem;
-  color: #333;
-  border-radius: 20px;
-  background-color: #fff;
-  cursor: pointer;
-  -webkit-appearance: none; /* Убирает стили браузера для select */
-  -moz-appearance: none;
-  appearance: none;
-}
-
-/* Стиль для вывода стрелочки */
 .dropdown-container::after {
   content: "▼";
   font-size: 1.2rem;
@@ -204,21 +225,3 @@ select {
   top: 20px;
   pointer-events: none;
 }
-
-/* Опционально: стилизация элементов select (option) */
-select option {
-  padding: 10px;
-  background-color: #fff;
-  color: #333;
-  border: none;
-  border-radius: 20px;
-  font-size: 1rem;
-}
-
-/* Стиль для фокуса */
-select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-

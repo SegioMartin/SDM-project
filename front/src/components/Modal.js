@@ -9,7 +9,7 @@ function Modal({ isOpen, title, message, onConfirm, onCancel }) {
     <div className="modal-overlay">
       <div className="modal">
         <h2>{title}</h2>
-        <p>{message}</p>
+        <p className='comment'>{message}</p>
         <div className="modal-buttons">
           <button onClick={onConfirm}>Ок</button>
           <button onClick={onCancel}>Отмена</button>

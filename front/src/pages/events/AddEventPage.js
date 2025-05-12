@@ -105,7 +105,7 @@ function AddEventPage() {
       <button onClick={() => navigate('/events')}>
         Назад к событиям
       </button>
-      <h1>Добавить событие</h1>
+      <h1>Создать событие</h1>
       <div className='input'>
         <div className='inputs'>
           <input

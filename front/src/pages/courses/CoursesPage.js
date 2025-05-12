@@ -24,9 +24,9 @@ function CoursesPage() {
           getRoles(),
         ]);
 
-        const allMemberships = membershipsRes.data;
-        const allGroups = groupsRes.data;
-        const allRoles = rolesRes.data;
+        const allMemberships = membershipsRes.data ?? [];
+        const allGroups = groupsRes.data ?? [];
+        const allRoles = rolesRes.data ?? [];
 
         setMemberships(allMemberships);
         setGroups(allGroups);
@@ -65,25 +65,35 @@ function CoursesPage() {
     return userRole?.name === 'admin';
   };
 
+  const userGroups = groups.filter(group =>
+    memberships.some(m => m.user_id === user.id && m.group_id === group.id)
+  );
+
+  const totalCoursesCount = Object.values(groupedCourses).reduce(
+    (sum, courses) => sum + (courses?.length || 0),
+    0
+  );
+
   return (
     <div>
       <h1>Мои курсы</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {groups
-        .filter(group => memberships.some(m => m.user_id === user.id && m.group_id === group.id))
-        .map(group => {
+      {userGroups.length === 0 || totalCoursesCount === 0 ? (
+        <p className="comment">Нет доступных курсов</p>
+      ) : (
+        userGroups.map(group => {
           const courses = groupedCourses[group.id] || [];
 
           return (
             <div key={group.id}>
-              <h2>«{group.name || 'Без названия'}»</h2>
+              <h2>{group.name || 'Без названия'}</h2>
               <div className="content">
-                {courses.length === 0 && <p className='comment'>Чилл, курсов нет...</p>}
+                {courses.length === 0 && <p className="comment">Чилл, курсов нет...</p>}
                 <ul>
                   {courses.map(course => (
-                    <Link to={`/course/${course.id}`}>  
-                      <li key={course.id} className="group_info">
+                    <Link to={`/course/${course.id}`} key={course.id}>
+                      <li className="group_info">
                         <strong>{course.name}</strong>
                         <p>{course.description}</p>
                       </li>
@@ -98,7 +108,8 @@ function CoursesPage() {
               </div>
             </div>
           );
-        })}
+        })
+      )}
     </div>
   );
 }

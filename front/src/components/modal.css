@@ -1,3 +1,27 @@
+:root {
+  --font-main: 'Arial', sans-serif;
+
+  --color-text-dark: #333;
+  --color-text-light: white;
+
+  --color-surface: #f9f9f9;
+  --color-surface-hover: #a7febf;
+
+  --color-link: #28a745;
+  --color-link-hover: #218838;
+
+  --color-button-primary: #28a745;
+  --color-button-primary-hover: #218838;
+
+  --color-button-disabled: #0f451b;
+
+  --color-delete: #dc0202;
+
+  --radius-small: 8px;
+  --radius-medium: 12px;
+  --radius-large: 20px;
+}
+
 /* Стиль для overlay, который перекрывает весь экран */
 .modal-overlay {
   position: fixed;
@@ -5,8 +29,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон */
-  z-index: 999; /* Убедитесь, что overlay будет поверх всего */
+  background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+  z-index: 999;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,13 +38,16 @@
 
 /* Стиль для самого модального окна */
 .modal {
-  background-color: white;
+  background-color: var(--color-text-dark); /* фон как у input и select */
   padding: 20px;
-  border-radius: 5px;
+  border-radius: var(--radius-large);
   max-width: 500px;
   width: 100%;
-  z-index: 1000; /* Убедитесь, что модальное окно на переднем плане */
   text-align: center;
+  color: var(--color-text-dark); /* тёмный текст */
+  font-family: var(--font-main);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* лёгкая тень */
+  transition: all 0.3s ease;
 }
 
 .modal-buttons {
@@ -30,16 +57,17 @@
 }
 
 .modal-buttons button {
-  padding: 8px 16px;
-  font-size: 16px;
+  padding: 10px 20px;
+  font-size: 1rem;
   cursor: pointer;
   border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: white;
-  transition: background-color 0.3s;
+  border-radius: var(--radius-large);
+  background-color: var(--color-button-primary);
+  color: var(--color-text-light);
+  font-family: var(--font-main);
+  transition: background-color 0.3s ease;
 }
 
 .modal-buttons button:hover {
-  background-color: #0056b3;
+  background-color: var(--color-button-primary-hover);
 }

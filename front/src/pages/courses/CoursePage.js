@@ -160,9 +160,9 @@ function CoursePage() {
         <div className='course_header'>
           <div className='header_info'>
             <h1>{isEditing ? 'Редактирование курса' : course.name}</h1>
-            {!isEditing && ( <small>{getGroupName(course.groupId) || 'Не указана'}</small> )}
+            {!isEditing && ( <small className='comment'>{getGroupName(course.groupId) || 'Не указана'}</small> )}
           </div>
-          {!isEditing && ( <p>{course.teacher}</p> )}
+          {!isEditing && ( <p className='comment'>{course.teacher}</p> )}
         </div>
       </div>
       <div className='course_form'>
